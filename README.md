@@ -17,10 +17,10 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
 ### Node.js
 
 - Install [Node.js](https://nodejs.org/)
-- Install [node serialport](https://github.com/voodootikigod/node-serialport) (via `npm`). On the Mac I do a `sudo npm install -g serialport` (which currently isn't working); same on Ubuntu.
+- Install [node serialport](https://github.com/voodootikigod/node-serialport) (via `npm`). On the Mac I do a `sudo npm install -g serialport` (which currently isn't working); same on Ubuntu (which also isn't working, because, well, Javascript; a local `npm install serialport` seems more functional).
 - Our CoffeeScript sources are in directory `coffee`; to automatically compile these into Javascript, install CoffeeScript (`sudo npm -install -g coffee` - which might require the `node` command, via `sudo apt-get install nodejs-legacy`) and then:
 
         coffee -c -w -o __js/ coffee/
         
   This will auto-watch and compile changed files. (It'll need to be relaunched if any new files are added.)
-  
+- The file `serial-poke.coffee` roughly mimics its Python equivalent: it sends a valid command to the Arduino every second, and also prints out valid responses. Rather than timing out read requests, it just examines incoming data asyncronously looking for each terminating `0x80` (so it does have a minimal understanding of the protocol).
