@@ -2,8 +2,7 @@
 
 import serial
 
-ser = serial.Serial(port="/dev/ttyACM0", baudrate=9600)
-
+ser = serial.Serial(port="/dev/ttyACM0", baudrate=9600, timeout=0.1)
 
 for i in range(20):
     print "[%d]" % i
@@ -13,13 +12,18 @@ for i in range(20):
                          0x80]))
     ser.flush()
 
-    # We expect back a two-byte payload, so 6 bytes total:
-    # command, byte 1 (MSB, LSB), byte 2 (MSB, LSB), terminator.
-    bb = ser.read(6)
+    # This is a simple, protocol-agnostic read: fetch characters until we time out.
+    # After a while it should settle down to 0xAB ... 0x80 sequences.
+    buf = []
+    going = True
 
-    print(''.join((' %02x' % ord(i)) for i in bb))
+    while going:
+        bb = ser.read()
+        if len(bb) == 0:
+            going = False
+        else:
+            for i in bb: buf.append(ord(i))
 
-    #for j in range(len(bb)):
-        #print "    [%d] -> %d" % (j, ord(bb[j]))
+    print(''.join((' %02x' % i) for i in buf))
 
 ser.close()
