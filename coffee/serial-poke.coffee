@@ -1,6 +1,6 @@
 SerialPort = require("serialport").SerialPort
 
-serialPort = new SerialPort "/dev/ttyACM0",
+serialPort = new SerialPort "/dev/tty.usbmodem14171",
         baudrate: 9600
 
 serialPort.on "open", ->

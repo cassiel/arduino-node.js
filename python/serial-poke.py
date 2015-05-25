@@ -2,7 +2,7 @@
 
 import serial
 
-ser = serial.Serial(port="/dev/ttyACM0", baudrate=9600, timeout=0.1)
+ser = serial.Serial(port="/dev/tty.usbmodem14171", baudrate=9600, timeout=0.1)
 
 for i in range(20):
     print "[%d]" % i
