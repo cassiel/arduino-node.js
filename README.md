@@ -55,7 +55,7 @@ comms.listPorts (ps) ->
 
 The `doit` function called here takes a port name (a string). It will probably call `comms.open`:
 
-```
+```coffee
 doit = (p) ->
     comms.open p,
         {baudrate: 9600}
@@ -71,7 +71,7 @@ The `open` function takes four arguments. (While reading the example above, reca
 - A record of command callbacks. See `arduino-clj` for the details, but this record has keys which are single-character strings - the command names back from the Arduino - and each key maps to a function taking a list of bytes as argument.
 - A callback to be called when the port opens. This callback is passed a transmitter object for sending data (and for closing the port):
 
-```
+```coffee
 action = (c) ->
     ...
     c.xmit 'L', [0]
