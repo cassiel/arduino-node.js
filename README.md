@@ -39,9 +39,9 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
         coffee -c -w -o __js/ coffee/
         
   This will auto-watch and compile changed files. (It'll need to be relaunched if any new files are added.) Note that `coffee/*.coffee` works better as a source if you're an Emacs user (otherwise the auto-watch gets confused by Emacs auto-save files).
-- The file `serial-poke.coffee` roughly mimics its Python equivalent: it sends a valid command to the Arduino every second, and also prints out valid responses. Rather than timing out read requests, it just examines incoming data asyncronously looking for each terminating `0x80` (so it does have a minimal understanding of the protocol).
+- The file `serial-poke.coffee` roughly mimics its Python equivalent: it sends a valid command to the Arduino every quarter second, and also prints out valid responses. Rather than timing out read requests, it just examines incoming data asyncronously looking for each terminating `0x80` (so it does have a minimal understanding of the protocol).
 
-The library is in `comms.coffee`. It exports two functions: `listPorts` (which lists all ports which appear to be connected to Arduinos), and `open` (to open a port for reading and writing). Both functions are callback-based, since the underlying serial library works this way. With the right call chaining, a script can open the first Arduino it finds, for example:
+The library is in `comms.coffee`. It exports two functions: `listPorts` (which lists all ports which appear to be connected to Arduinos), and `open` (to open a port for reading and writing). Both functions are callback-based, since the underlying serial library works that way. With the right call chaining, a script can open the first Arduino it finds, for example:
 
 ```
 comms = require "./comms"
@@ -68,7 +68,7 @@ The `open` function takes four arguments. (While reading the example above, reca
 
 - The port name
 - A record of options for the Node.js serial driver (q.v.)
-- A record of command callbacks. See `arduino-clj` for the details, but map has keys which are single-character strings - the command names back from the Arduino - and each key maps to a function taking a list of bytes as argument.
+- A record of command callbacks. See `arduino-clj` for the details, but this record has keys which are single-character strings - the command names back from the Arduino - and each key maps to a function taking a list of bytes as argument.
 - A callback to be called when the port opens. This callback is passed a transmitter object for sending data (and for closing the port):
 
 ```
