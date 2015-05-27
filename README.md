@@ -43,7 +43,7 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
 
 The library is in `comms.coffee`. It exports two functions: `listPorts` (which lists all ports which appear to be connected to Arduinos), and `open` (to open a port for reading and writing). Both functions are callback-based, since the underlying serial library works that way. With the right call chaining, a script can open the first Arduino it finds, for example:
 
-```
+```coffee
 comms = require "./comms"
 
 comms.listPorts (ps) ->
