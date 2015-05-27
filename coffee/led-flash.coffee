@@ -2,18 +2,7 @@
 
 comms = require "./comms"
 
-doit = (p) ->
-    callbacks =
-        '+': (data) -> console.log "<<< +: #{(data[0] << 8) + data[1]}"
-
-    console.log "opening #{p}..."
-
-    c = new comms.Comms p,
-        baudrate: 9600
-        callbacks
-
-    #setInterval (() -> c.rawWrite a), 1000
-
+action = (c) ->
     light = 1
     times = 0
 
@@ -36,6 +25,14 @@ doit = (p) ->
             times = times + 1
 
     timer = setInterval f, 250
+
+doit = (p) ->
+    console.log "opening #{p}..."
+
+    comms.open p,
+        {baudrate: 9600}
+        '+': (data) -> console.log "<<< +: #{(data[0] << 8) + data[1]}"
+        action
 
 comms.listPorts (ps) ->
     if ps.length == 0

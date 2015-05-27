@@ -23,18 +23,15 @@ listPorts = (cb) ->
 # map of callbacks (each of which is a character to a function from byte
 # array). CoffeeScript Danger Will Robinson: be careful to pass the two
 # maps separately (so write one of them in {...} form, or bind to a
-# variable first)
+# variable first). Final design tweak, drinking the Javascript juice:
+# our top-level "open" function takes a callback (natch) which is called
+# with a writer class (containing xmit and close).
 
-class Comms
-    constructor: (@port, @options, @callbacks) ->
-        this.__serialPort = new SerialPort @port, @options
+class Connection
+    constructor: (@serialPort, @callbacks) ->
         this.__inMessage = []
 
-        opener = -> null
-
-        this.__serialPort.on "open", opener.bind this
-
-        this.__serialPort.on "data", (data) =>
+        this.serialPort.on "data", (data) =>
             for b in data
                 this.handleByte b
 
@@ -57,14 +54,14 @@ class Comms
             this.__inMessage = []
 
     rawWrite: (a) ->
-        if this.__serialPort.isOpen()
+        if this.serialPort.isOpen()
             buf = new Buffer a
-            this.__serialPort.write buf, (err, results) ->
+            this.serialPort.write buf, (err, results) ->
                 if err
                     console.log "err: #{err}"
-            this.__serialPort.drain()
+            this.serialPort.drain()
         else
-            console.log "port not open yet"
+            console.log "port not open"
 
     xmit: (ch, bytes) ->
         a = [(ch.charCodeAt 0) | 0x80]
@@ -76,8 +73,13 @@ class Comms
         this.rawWrite a
 
     close: ->
-        this.__serialPort.close() if this.__serialPort.isOpen()
+        this.serialPort.close() if this.serialPort.isOpen()
+
+open = (port, options, callbacks, writerFn) ->
+    serialPort = new SerialPort port, options
+    serialPort.on "open", ->
+        writerFn (new Connection serialPort, callbacks)
 
 module.exports =
     listPorts: listPorts
-    Comms: Comms
+    open: open
