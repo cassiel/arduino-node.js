@@ -32,7 +32,7 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
 
 ### Node.js
 
-- Install [Node.js](https://nodejs.org/)
+- Install [Node.js](https://nodejs.org/).
 - Install [node serialport](https://github.com/voodootikigod/node-serialport) (via `npm`). Under OS X and Linux this can't be installed globally with `-g` (because, well, Javascript); a local `npm install serialport` seems to work fine.
 - Our CoffeeScript sources are in directory `coffee`; to automatically compile these into Javascript, install CoffeeScript (`sudo npm install -g coffee-script`) - which might require the `node` command in order to run (via `sudo apt-get install nodejs-legacy`) and then:
 
