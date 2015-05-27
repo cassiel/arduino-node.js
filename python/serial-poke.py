@@ -6,6 +6,7 @@ ser = serial.Serial(port="/dev/tty.usbmodem14171", baudrate=9600, timeout=0.1)
 
 for i in range(20):
     print "[%d]" % i
+    # Send a complete, well-formed message:
     ser.write(bytearray([ord('+') | 0x80,
                          0, 1 & 0xF,
                          0, 10 & 0xF,
@@ -24,6 +25,6 @@ for i in range(20):
         else:
             for i in bb: buf.append(ord(i))
 
-    print(''.join((' %02x' % i) for i in buf))
+    print(''.join((' %02X' % i) for i in buf))
 
 ser.close()
