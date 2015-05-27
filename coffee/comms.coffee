@@ -3,7 +3,7 @@
 sp = require("serialport")
 SerialPort = sp.SerialPort
 
-ARDUINO_MANUFACTURER = /^Arduino .*$/
+ARDUINO_MANUFACTURER = /^Arduino.*$/
 
 # More Javascript callback hell:
 listPorts = (cb) ->
@@ -13,6 +13,7 @@ listPorts = (cb) ->
             console.log err
         else
             ports.forEach (p) ->
+                console.log "examining #{JSON.stringify p}"
                 if ARDUINO_MANUFACTURER.test p.manufacturer
                     result.push p.comName
 
