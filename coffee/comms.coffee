@@ -13,7 +13,7 @@ listPorts = (cb) ->
             console.log err
         else
             ports.forEach (p) ->
-                console.log "examining #{JSON.stringify p}"
+                #console.log "examining #{JSON.stringify p}"
                 if ARDUINO_MANUFACTURER.test p.manufacturer
                     result.push p.comName
 
