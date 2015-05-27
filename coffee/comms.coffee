@@ -1,6 +1,22 @@
 # -*- coffee-tab-width: 4; -*-
 
-SerialPort = require("serialport").SerialPort
+sp = require("serialport")
+SerialPort = sp.SerialPort
+
+ARDUINO_MANUFACTURER = /^Arduino .*$/
+
+# More Javascript callback hell:
+listPorts = (cb) ->
+    result = []
+    sp.list (err, ports) ->
+        if err
+            console.log err
+        else
+            ports.forEach (p) ->
+                if ARDUINO_MANUFACTURER.test p.manufacturer
+                    result.push p.comName
+
+            cb result
 
 # The Comms takes a port, a map of options for SerialPort, and a second
 # map of callbacks (each of which is a character to a function from byte
@@ -10,12 +26,10 @@ SerialPort = require("serialport").SerialPort
 
 class Comms
     constructor: (@port, @options, @callbacks) ->
-        this.__portName = @port
         this.__serialPort = new SerialPort @port, @options
-        this.__callbacks = @callbacks
         this.__inMessage = []
 
-        opener = -> console.log "opened #{this.__portName}"
+        opener = -> null
 
         this.__serialPort.on "open", opener.bind this
 
@@ -30,7 +44,8 @@ class Comms
             #console.log im.map((i) -> ("0" + i.toString 16).slice -2).join " "
             if im.length > 0 and im[0] > 0x80     # Quick sanity check at startup
                 cmd = String.fromCharCode im[0] & 0x7F
-                cb = this.__callbacks[cmd]
+                cb = this.callbacks[cmd]
+                # Do we have a callback for this command character?
                 if cb
                     data = []
                     len = (im.length - 2) / 2
@@ -59,5 +74,9 @@ class Comms
         #console.log a
         this.rawWrite a
 
+    close: ->
+        this.__serialPort.close() if this.__serialPort.isOpen()
+
 module.exports =
+    listPorts: listPorts
     Comms: Comms

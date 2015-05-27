@@ -2,24 +2,43 @@
 
 comms = require "./comms"
 
-callbacks =
-    '+': (data) -> console.log "<<< +: #{(data[0] << 8) + data[1]}"
+doit = (p) ->
+    callbacks =
+        '+': (data) -> console.log "<<< +: #{(data[0] << 8) + data[1]}"
 
-c = new comms.Comms "/dev/tty.usbmodem14171",
-    baudrate: 9600
-    callbacks
+    console.log "opening #{p}..."
 
-#setInterval (() -> c.rawWrite a), 1000
+    c = new comms.Comms p,
+        baudrate: 9600
+        callbacks
 
-light = 1
+    #setInterval (() -> c.rawWrite a), 1000
 
-f = ->
-    c.xmit 'L', [light]
-    light = 1 - light
+    light = 1
+    times = 0
 
-    n1 = Math.floor(Math.random() * 256)
-    n2 = Math.floor(Math.random() * 256)
-    console.log ">>> #{n1} + #{n2}"
-    c.xmit '+', [n1, n2]
+    timer = null
 
-setInterval f, 1000
+    f = ->
+        if times == 20
+            clearInterval timer
+            c.close()
+        else
+            console.log "[#{times}]"
+            c.xmit 'L', [light]
+            light = 1 - light
+
+            n1 = Math.floor(Math.random() * 256)
+            n2 = Math.floor(Math.random() * 256)
+            console.log ">>> #{n1} + #{n2}"
+            c.xmit '+', [n1, n2]
+
+            times = times + 1
+
+    timer = setInterval f, 250
+
+comms.listPorts (ps) ->
+    if ps.length == 0
+        console.log "no Arduino found"
+    else
+        doit ps[0]
