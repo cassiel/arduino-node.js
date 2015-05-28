@@ -7,7 +7,7 @@ Generic Arduino protocol and comms for Python, Ruby, and Javascript/CoffeeScript
 ## Status
 
 - Node.js is done
-- Python is partially done (test code, but no package yet - awaiting port from other projects)
+- Python is done
 - Ruby still to be ported from other projects
 
 This is a front-end package for talking to an Arduino with Python, Ruby and Node.js. It's a child project of [arduino-clj](https://github.com/cassiel/arduino-clj), which contains the back-end Arduino code and a front-end for Clojure; this project just adds front-ends for Python, Ruby and Node.js, talking to the same back-end. Refer to `arduino-clj` for protocol reference, Arduino installation instructions and so on.
