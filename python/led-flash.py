@@ -23,3 +23,5 @@ for i in range(20):
     print ">>> %d + %d" % (n1, n2)
     c.xmit('+', [n1, n2])
     drain()
+
+c.close()

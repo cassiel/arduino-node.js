@@ -62,6 +62,10 @@ def drain():
         if n == 0: break
 ```
 
+Close the port (if desired) with `close`.
+
+See `led-flash.py` for a complete example.
+
 ### Node.js
 
 - Install [Node.js](https://nodejs.org/).

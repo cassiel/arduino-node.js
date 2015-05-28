@@ -54,3 +54,6 @@ class Comms:
         b.append(0x80)
         self.__serial.write(bytearray(b))
         self.__serial.flush()
+
+    def close(self):
+        self.__serial.close()
