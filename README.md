@@ -28,7 +28,39 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
 
   Don't forget to set the serial port name (`/dev/ttyXXXXX`) correctly.
   
-  TODO: Python client framework.
+The library is in `comms.py`. It provides a single class, called `Comms`. The constructor takes three arguments:
+
+- Port name (string)
+- Dictionary of options to pass to serial library
+- Dictionary of callback functions, where each entry maps a single-character string to a function taking a list of bytes
+
+For example:
+
+```python
+def addition(data):
+    print "<<< +: %d" % ((data[0] << 8) + data[1])
+
+c = Comms("/dev/cu.usbmodem14171",
+          {'baudrate': 9600, 'timeout': 0.25},
+          {'+': addition, '?': debug})
+```
+
+Transmit to the Arduino using `xmit`:
+
+```python
+c.xmit('L', [light])
+...
+c.xmit('+', [n1, n2])
+```
+
+Unlike the Node.js version, the serial port has to be polled repeatedly. Call `service` with an argument specifying the maximum number of bytes to service; it will return the number of bytes actually read. (Note that these numbers are actual serial bytes, not bytes of command payload.) This call will block unless the serial timeout is set to `0` (to return immediately) or some positive float value to timeout when data is not available; use which ever best fits the rest of the application. For example:
+
+```python
+def drain():
+    while True:
+        n = c.service(1)
+        if n == 0: break
+```
 
 ### Node.js
 
