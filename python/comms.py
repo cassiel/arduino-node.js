@@ -4,12 +4,11 @@ Serial protocol handler in Python. (See also: CoffeeScript, Ruby, Clojure.)
 import serial
 
 class Comms:
-    def __init__(self, port, options, callbacks):
+    def __init__(self, port, **options):
         '''
-        Initialise with a port name, a record of serial options, and a record of callbacks.
+        Initialise with a port name plus serial options.
         '''
         self.__serial = serial.Serial(port="/dev/tty.usbmodem14171", **options)
-        self.__callbacks = callbacks
         self.__command = 0
         self.__firstNybble = True
         self.__currentByte = 0
@@ -21,9 +20,7 @@ class Comms:
         Here we pack the bytes as we go.
         '''
         if byte == 0x80:                                # End of message
-            cmdChar = chr(self.__command)
-            if cmdChar in self.__callbacks:
-                self.__callbacks[cmdChar](self.__data)
+            self.handle(chr(self.__command), self.__data)
         elif byte & 0x80:                               # Start of message
             self.__command = byte & 0x7F
             self.__firstNybble = True
@@ -36,13 +33,21 @@ class Comms:
 
             self.__firstNybble = not self.__firstNybble
 
+    def handle(self, command, data):
+        '''
+        Subclass Comms and provide a handler to deal with incoming data.
+        '''
+        pass
+
     def service(self, n):
         '''
         Attempt to service up to `n` bytes. May block if timeout is None.
         Return number of bytes processed.
         '''
         bb = self.__serial.read()
-        for i in bb: self.handleByte(ord(i))
+        for i in bb:
+            if isinstance(i, str): i = ord(i)
+            self.handleByte(i)
         return len(bb)
 
     def xmit(self, cmd, data):

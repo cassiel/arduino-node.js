@@ -10,13 +10,15 @@ Generic Arduino protocol and comms for Python, Ruby, and Javascript/CoffeeScript
 - Python is done
 - Ruby still to be ported from other projects
 
+## Introduction
+
 This is a front-end package for talking to an Arduino with Python, Ruby and Node.js. It's a child project of [arduino-clj](https://github.com/cassiel/arduino-clj), which contains the back-end Arduino code and a front-end for Clojure; this project just adds front-ends for Python, Ruby and Node.js, talking to the same back-end. Refer to `arduino-clj` for protocol reference, Arduino installation instructions and so on.
 
-## Installation
-
-For initial testing, follow the Python route and get `serial-poke.py` working.
+For initial testing, follow the Python route and get `serial-poke.py` working (unless you're happier hacking at Node.js).
 
 ### Python
+
+The code works under Python 2 and Python 3.
 
 - On OS X, the serial package for Python 2.x isn't installed by default, so:
 
@@ -28,21 +30,22 @@ For initial testing, follow the Python route and get `serial-poke.py` working.
 
   Don't forget to set the serial port name (`/dev/ttyXXXXX`) correctly.
   
-The library is in `comms.py`. It provides a single class, called `Comms`. The constructor takes three arguments:
+The library is in `comms.py`. It provides a single class, called `Comms`. The constructor takes an obligatory argument for the port name, followed by optional keyword arguments for the serial options.
 
-- Port name (string)
-- Dictionary of options to pass to serial library
-- Dictionary of callback functions, where each entry maps a single-character string to a function taking a list of bytes
+Create a subtype of `Comms` and provide a method `handle(command, data)` to actually deal with incoming messages.
 
 For example:
 
 ```python
-def addition(data):
-    print "<<< +: %d" % ((data[0] << 8) + data[1])
+class LedFlash(Comms):
+    def __init__(self):
+        Comms.__init__(self, "/dev/cu.usbmodem14171", baudrate=9600, timeout=0.25)
 
-c = Comms("/dev/cu.usbmodem14171",
-          {'baudrate': 9600, 'timeout': 0.25},
-          {'+': addition, '?': debug})
+    def handle(self, command, data):
+        if command == "+":
+            print("<<< +: %d" % ((data[0] << 8) + data[1]))
+
+c = LedFlash()
 ```
 
 Transmit to the Arduino using `xmit`:
