@@ -27,7 +27,8 @@ abstract class Comms {
     }
     
     private void handleByte(byte b) {
-        if (b == 0x80) {
+        // Hateful: Java has signed bytes:
+        if (b == -0x80) {
             Byte[] tmp = itsData.toArray(new Byte[] { });
             byte[] d = new byte[tmp.length];
             

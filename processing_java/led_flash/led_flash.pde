@@ -1,6 +1,6 @@
 class LedFlash extends Comms {
     LedFlash(PApplet sketch) {
-        super(sketch, "/dev/cu.usbmodem1411", 9600);
+        super(sketch, "/dev/cu.usbmodem14211", 9600);
     }
     
     void handle(char command, byte[] data) {
@@ -11,6 +11,7 @@ class LedFlash extends Comms {
 }
 
 Comms c = new LedFlash(this);
+int lastSample = millis();
 
 void setup() {
     int light = 1;
@@ -24,9 +25,13 @@ void setup() {
         try { Thread.sleep(100); } catch (Exception _) { }
     }
     
-    c.xmit('+', new byte[] { 1, 2, 3 });
 }
 
 void draw() {
+    if (lastSample + 1000 < millis()) {
+        c.xmit('+', new byte[] { 1, 2, 3 });
+        lastSample = millis();
+    }
+    
     c.service();
 }
