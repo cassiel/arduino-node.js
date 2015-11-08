@@ -4,11 +4,11 @@ Serial protocol handler in Python. (See also: CoffeeScript, Ruby, Clojure.)
 import serial
 
 class Comms:
-    def __init__(self, port, **options):
+    def __init__(self, port, baudrate=28800, **options):
         '''
         Initialise with a port name plus serial options.
         '''
-        self.__serial = serial.Serial(port="/dev/tty.usbmodem14171", **options)
+        self.__serial = serial.Serial(port=port, baudrate=baudrate, **options)
         self.__command = 0
         self.__firstNybble = True
         self.__currentByte = 0
